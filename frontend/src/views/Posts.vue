@@ -697,34 +697,34 @@ const switchToAI = () => {
 }
 
 /* 响应式设计 */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .posts-controls {
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 1rem;
-    align-items: stretch;
   }
 
   .filter-buttons {
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
-  .filter-group {
-    width: 100%;
+  .posts-list {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
   }
 
-  .filter-group select {
-    width: 100%;
+  .page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
   }
 
-  .order-buttons {
-    flex-direction: row;
-    justify-content: center;
-  }
-
-  .pagination {
-    flex-direction: column;
-    gap: 0.5rem;
+  .page-header p {
+    font-size: 1rem;
   }
 
   .header-actions {
@@ -735,14 +735,296 @@ const switchToAI = () => {
 
   .mode-toggle {
     justify-content: center;
+    gap: 0.5rem;
   }
 
   .mode-btn {
     padding: 0.5rem 0.75rem !important;
+    font-size: 0.85rem;
+  }
+
+  .posts-controls {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .search-box {
+    order: 1;
+  }
+
+  .search-input {
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .search-icon {
+    left: 0.75rem;
+  }
+
+  .filter-buttons {
+    order: 2;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filter-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filter-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+
+  .filter-group select {
+    width: 100%;
+    padding: 0.625rem;
+    font-size: 0.85rem;
+  }
+
+  .order-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .order-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .posts-container {
+    padding: 1.5rem 0;
+  }
+
+  .posts-list {
+    gap: 0.75rem;
+  }
+
+  .post-card {
+    padding: 1rem;
+  }
+
+  .post-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .author-info {
+    flex: 1;
+  }
+
+  .author-name {
+    font-size: 0.9rem;
+  }
+
+  .post-time {
+    font-size: 0.8rem;
+  }
+
+  .post-content {
+    margin-bottom: 0.75rem;
+  }
+
+  .post-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-excerpt {
+    font-size: 0.9rem;
+  }
+
+  .post-footer {
+    margin-top: 0.75rem;
+  }
+
+  .post-stats {
+    gap: 1rem;
+  }
+
+  .stat-item {
+    font-size: 0.8rem;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: 0.625rem 1rem;
   }
 
   .accessibility-shortcut {
     display: none !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .posts-page {
+    padding: 1.5rem 0;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .page-header p {
+    font-size: 0.95rem;
+  }
+
+  .header-actions {
+    gap: 0.75rem !important;
+  }
+
+  .mode-btn {
+    padding: 0.5rem 0.625rem !important;
+    font-size: 0.8rem;
+  }
+
+  .posts-controls {
+    padding: 0.75rem;
+  }
+
+  .search-input {
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    font-size: 0.85rem;
+  }
+
+  .filter-group label {
+    font-size: 0.8rem;
+  }
+
+  .filter-group select {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .order-btn {
+    padding: 0.4rem 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  .posts-container {
+    padding: 1rem 0;
+  }
+
+  .post-card {
+    padding: 0.875rem;
+  }
+
+  .post-title {
+    font-size: 1rem;
+  }
+
+  .post-excerpt {
+    font-size: 0.85rem;
+  }
+
+  .author-name {
+    font-size: 0.85rem;
+  }
+
+  .post-time {
+    font-size: 0.75rem;
+  }
+
+  .stat-item {
+    font-size: 0.75rem;
+  }
+
+  .pagination {
+    padding: 0.75rem;
+  }
+
+  .btn {
+    min-height: 40px;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .posts-page {
+    padding: 1rem 0;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-header p {
+    font-size: 0.9rem;
+  }
+
+  .header-actions {
+    gap: 0.5rem !important;
+  }
+
+  .mode-btn {
+    padding: 0.4rem 0.5rem !important;
+    font-size: 0.75rem;
+  }
+
+  .posts-controls {
+    padding: 0.5rem;
+  }
+
+  .search-input {
+    padding: 0.45rem 0.625rem 0.45rem 2rem;
+    font-size: 0.8rem;
+  }
+
+  .filter-group label {
+    font-size: 0.75rem;
+  }
+
+  .filter-group select {
+    padding: 0.45rem;
+    font-size: 0.75rem;
+  }
+
+  .order-btn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  .post-card {
+    padding: 0.75rem;
+  }
+
+  .post-title {
+    font-size: 0.95rem;
+  }
+
+  .post-excerpt {
+    font-size: 0.8rem;
+  }
+
+  .author-name {
+    font-size: 0.8rem;
+  }
+
+  .post-time {
+    font-size: 0.7rem;
+  }
+
+  .stat-item {
+    font-size: 0.7rem;
+  }
+
+  .btn {
+    min-height: 36px;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.8rem;
   }
 }
 

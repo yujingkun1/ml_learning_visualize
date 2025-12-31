@@ -491,22 +491,198 @@ const handleCardKeydown = (event: KeyboardEvent, algorithmId: number) => {
   text-align: center;
 }
 
+/* 响应式设计 */
+@media (max-width: 1024px) {
+  .algorithms-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+  }
+
   .algorithms-controls {
     flex-direction: column;
+    gap: 1rem;
     align-items: stretch;
+    padding: 1rem;
   }
 
   .search-box {
     max-width: none;
+    order: 1;
+  }
+
+  .search-input {
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .search-icon {
+    left: 0.75rem;
   }
 
   .filter-buttons {
+    order: 2;
     justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-buttons select {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.85rem;
+    min-width: 120px;
+  }
+
+  .algorithms-container {
+    padding: 1.5rem 0;
   }
 
   .algorithms-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .algorithm-card {
+    padding: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .algorithm-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .algorithm-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .algorithm-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .algorithm-content h3 {
+    font-size: 1rem;
+  }
+
+  .algorithm-content p {
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .algorithm-tags {
+    gap: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .algorithm-actions {
+    text-align: center;
+  }
+
+  .btn.btn-primary {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .algorithms-page {
+    padding: 1.5rem 0;
+  }
+
+  .page-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .algorithms-controls {
+    padding: 0.75rem;
+  }
+
+  .algorithms-container {
+    padding: 1rem 0;
+  }
+
+  .algorithm-card {
+    padding: 1rem;
+  }
+
+  .algorithm-content h3 {
+    font-size: 0.95rem;
+  }
+
+  .algorithm-content p {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .algorithms-page {
+    padding: 1rem 0;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .page-header p {
+    font-size: 0.9rem;
+  }
+
+  .algorithms-controls {
+    padding: 0.5rem;
+  }
+
+  .search-input {
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    font-size: 0.85rem;
+  }
+
+  .filter-buttons select {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8rem;
+    min-width: 100px;
+  }
+
+  .algorithm-card {
+    padding: 0.875rem;
+  }
+
+  .algorithm-content h3 {
+    font-size: 0.9rem;
+  }
+
+  .algorithm-content p {
+    font-size: 0.75rem;
+  }
+
+  .tag {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
   }
 }
 </style>

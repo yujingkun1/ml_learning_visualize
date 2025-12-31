@@ -424,7 +424,7 @@ def get_recommendations(current_user_id):
                 )
 
             # 2. 基于向量相似度推荐算法
-            if user_interest_vector is not None:
+            if user_interest_vector is not None and not np.allclose(user_interest_vector, 0):
                 similar_algorithms = vector_service.find_similar_algorithms(
                     user_interest_vector,
                     limit=15,  # 多取一些用于后续过滤
@@ -466,8 +466,10 @@ def get_recommendations(current_user_id):
 
         except Exception as e:
             logging.warning(f"Vector-based algorithm recommendation failed: {e}")
-            # 回退到传统方法
-            algorithm_recommendations = get_fallback_algorithm_recommendations(
+
+        # 如果向量推荐失败或没有足够数据，使用改进的回退方法
+        if not algorithm_recommendations:
+            algorithm_recommendations = get_improved_fallback_algorithm_recommendations(
                 current_user_id, learned_algorithm_ids, current_time
             )
 
@@ -605,27 +607,97 @@ def get_recommendations(current_user_id):
         return jsonify({"message": "Failed to get recommendations"}), 500
 
 
-def get_fallback_algorithm_recommendations(
+def get_improved_fallback_algorithm_recommendations(
     current_user_id, learned_algorithm_ids, current_time
 ):
-    """传统推荐算法的回退方案"""
+    """改进的传统推荐算法回退方案"""
     try:
-        all_algorithms = (
-            Algorithm.query.filter(~Algorithm.id.in_(learned_algorithm_ids))
-            .limit(5)
-            .all()
-        )
+        # 如果用户没有学习任何算法，返回最热门的算法
+        if not learned_algorithm_ids:
+            # 按创建时间倒序，返回最新的算法
+            algorithms = Algorithm.query.order_by(Algorithm.created_at.desc()).limit(8).all()
+            recommendations = []
+            for alg in algorithms:
+                alg_dict = alg.to_dict()
+                alg_dict["final_score"] = 60.0  # 给新算法稍高的分数
+                alg_dict["recommendation_reasons"] = ["最新算法"]
+                recommendations.append(alg_dict)
+            return recommendations
+
+        # 如果用户已经学习了一些算法，推荐不同难度或类别的算法
+        learned_algorithms = Algorithm.query.filter(Algorithm.id.in_(learned_algorithm_ids)).all()
+        learned_difficulties = {alg.difficulty for alg in learned_algorithms}
+        learned_categories = {alg.category_id for alg in learned_algorithms if alg.category_id}
+
+        # 优先推荐用户未尝试的难度级别
+        preferred_difficulties = []
+        if "beginner" not in learned_difficulties:
+            preferred_difficulties.append("beginner")
+        if "intermediate" not in learned_difficulties:
+            preferred_difficulties.append("intermediate")
+        if "advanced" not in learned_difficulties:
+            preferred_difficulties.append("advanced")
+
         recommendations = []
 
-        for alg in all_algorithms:
-            alg_dict = alg.to_dict()
-            alg_dict["final_score"] = 50.0  # 默认分数
-            alg_dict["recommendation_reasons"] = ["通用推荐"]
-            recommendations.append(alg_dict)
+        # 推荐不同难度的算法
+        if preferred_difficulties:
+            for difficulty in preferred_difficulties:
+                alg = Algorithm.query.filter(
+                    Algorithm.difficulty == difficulty,
+                    ~Algorithm.id.in_(learned_algorithm_ids)
+                ).first()
+                if alg:
+                    alg_dict = alg.to_dict()
+                    alg_dict["final_score"] = 70.0
+                    alg_dict["recommendation_reasons"] = [f"适合{alg_dict.get('difficulty', '新手') }学习者"]
+                    recommendations.append(alg_dict)
+                    if len(recommendations) >= 4:
+                        break
 
-        return recommendations
-    except Exception:
-        return []
+        # 如果还没够8个，补充其他未学习的算法
+        if len(recommendations) < 8:
+            remaining_algorithms = Algorithm.query.filter(
+                ~Algorithm.id.in_(learned_algorithm_ids)
+            ).limit(8 - len(recommendations)).all()
+
+            for alg in remaining_algorithms:
+                alg_dict = alg.to_dict()
+                alg_dict["final_score"] = 50.0
+                alg_dict["recommendation_reasons"] = ["探索新算法"]
+                recommendations.append(alg_dict)
+
+        # 如果还是没有推荐（用户学习了所有算法），返回所有算法中用户进步最慢的
+        if not recommendations:
+            slowest_progress = UserKnowledge.query.filter_by(
+                user_id=current_user_id
+            ).order_by(UserKnowledge.progress.asc()).first()
+
+            if slowest_progress:
+                alg = Algorithm.query.get(slowest_progress.algorithm_id)
+                if alg:
+                    alg_dict = alg.to_dict()
+                    alg_dict["final_score"] = 80.0
+                    alg_dict["recommendation_reasons"] = ["建议复习巩固"]
+                    recommendations.append(alg_dict)
+
+        return recommendations[:8]
+
+    except Exception as e:
+        logging.error(f"Improved fallback algorithm recommendation failed: {e}")
+        # 最后的回退：返回任意算法
+        try:
+            algorithms = Algorithm.query.limit(8).all()
+            return [
+                {
+                    **alg.to_dict(),
+                    "final_score": 40.0,
+                    "recommendation_reasons": ["系统推荐"]
+                }
+                for alg in algorithms
+            ]
+        except Exception:
+            return []
 
 
 def get_fallback_post_recommendations(current_user_id, current_time):

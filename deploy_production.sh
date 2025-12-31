@@ -45,7 +45,8 @@ apt install -y \
     curl \
     build-essential \
     libmysqlclient-dev \
-    pkg-config
+    pkg-config \
+    nodejs
 
 # Install gunicorn globally for systemd
 pip3 install gunicorn
@@ -70,11 +71,16 @@ chown -R $SERVICE_USER:$SERVICE_USER .
 
 # Setup Python virtual environment
 echo -e "${YELLOW}🐍 Setting up Python virtual environment...${NC}"
-su - $SERVICE_USER -c "cd $PROJECT_PATH/backend && python3 -m venv venv"
-su - $SERVICE_USER -c "cd $PROJECT_PATH/backend && source venv/bin/activate && pip install -r requirements.txt"
+cd $PROJECT_PATH/backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 
 # Install additional production dependencies
-su - $SERVICE_USER -c "cd $PROJECT_PATH/backend && source venv/bin/activate && pip install gunicorn pymysql"
+pip install gunicorn pymysql
+
+# Change ownership to service user
+chown -R $SERVICE_USER:$SERVICE_USER $PROJECT_PATH/backend/venv
 
 # Setup database
 echo -e "${YELLOW}🗄️ Setting up MySQL database...${NC}"
@@ -92,10 +98,19 @@ fi
 
 # Build frontend
 echo -e "${YELLOW}🎨 Building frontend...${NC}"
-cd frontend
-npm install
-npm run build
-cd ..
+if command -v npm &> /dev/null; then
+    cd $PROJECT_PATH/frontend
+    if [ ! -d "dist" ]; then
+        npm install --legacy-peer-deps
+        npm run build --legacy-peer-deps
+    else
+        echo -e "${GREEN}✅ Frontend already built, skipping...${NC}"
+    fi
+    cd $PROJECT_PATH
+else
+    echo -e "${RED}❌ npm not found. Please install Node.js and npm first${NC}"
+    exit 1
+fi
 
 # Setup environment variables
 echo -e "${YELLOW}🔧 Setting up environment variables...${NC}"

@@ -1022,23 +1022,290 @@ onMounted(() => {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* 响应式设计 - 多断点系统 */
+@media (max-width: 1024px) {
+  .claude-top {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .usecases-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
-  .hero h1 {
-    font-size: 2rem;
+  .hero-immersive {
+    min-height: 360px;
+    padding: 1rem 0;
+  }
+
+  .hero-content {
+    padding: 1rem 0;
+    padding-top: calc(var(--nav-height) + 1rem);
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem;
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+    max-width: 100%;
+    margin: 0.5rem auto 1.25rem;
   }
 
   .hero-actions {
     flex-direction: column;
+    gap: 0.75rem;
     align-items: center;
   }
 
-  .graph-controls {
-    flex-direction: column;
-    align-items: stretch;
+  .btn.btn-primary,
+  .btn.btn-secondary {
+    width: 100%;
+    max-width: 280px;
+    padding: 0.875rem 1.25rem;
+    font-size: 0.95rem;
   }
 
-  .features-grid {
+  .roadmap-section {
+    padding: 2rem 0;
+  }
+
+  .roadmap-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .roadmap-container {
+    padding: 1.5rem;
+  }
+
+  .quadrant-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .quadrant {
+    padding: 0.75rem;
+    min-height: 180px;
+  }
+
+  .quadrant-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .node {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .node-name {
+    font-size: 0.9rem;
+  }
+
+  .node-meta {
+    font-size: 0.75rem;
+  }
+
+  .claude-section {
+    padding: 2rem 0;
+  }
+
+  .claude-intro h2 {
+    font-size: 1.8rem;
+  }
+
+  .claude-cards {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .claude-card {
+    padding: 0.75rem;
+  }
+
+  .claude-choices {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .choice {
+    padding: 1rem;
+  }
+
+  .choice h3 {
+    font-size: 1.1rem;
+  }
+
+  .choice p {
+    font-size: 0.9rem;
+  }
+
+  .usecases-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .usecase {
+    padding: 0.75rem 1rem;
+  }
+
+  .usecase h4 {
+    font-size: 0.95rem;
+  }
+
+  .usecase p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .container {
+    padding: 0 1rem;
+  }
+
+  .hero-immersive {
+    min-height: 320px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.8rem;
+  }
+
+  .hero-content p {
+    font-size: 0.95rem;
+  }
+
+  .roadmap-container {
+    padding: 1rem;
+  }
+
+  .quadrant-grid {
+    gap: 0.75rem;
+  }
+
+  .quadrant {
+    padding: 0.6rem;
+    min-height: 160px;
+  }
+
+  .node {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .claude-intro h2 {
+    font-size: 1.6rem;
+  }
+
+  .claude-intro .sub {
+    font-size: 0.9rem;
+  }
+
+  .claude-cta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .choice-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .usecases .icon-hero {
+    font-size: 32px;
+  }
+
+  .usecases h2 {
+    font-size: 2.2rem;
+  }
+
+  .usecases-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .usecase {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-immersive {
+    min-height: 280px;
+  }
+
+  .hero-content {
+    padding: 0.75rem 0;
+    padding-top: calc(var(--nav-height) + 0.75rem);
+  }
+
+  .hero-content h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-content p {
+    font-size: 0.9rem;
+    margin: 0.4rem auto 1rem;
+  }
+
+  .btn.btn-primary,
+  .btn.btn-secondary {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .roadmap-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .quadrant-title {
+    font-size: 0.85rem;
+  }
+
+  .node {
+    padding: 0.35rem 0.45rem;
+  }
+
+  .node-name {
+    font-size: 0.85rem;
+  }
+
+  .node-meta {
+    font-size: 0.7rem;
+  }
+
+  .claude-intro h2 {
+    font-size: 1.4rem;
+  }
+
+  .claude-card h4 {
+    font-size: 0.9rem;
+  }
+
+  .claude-card p {
+    font-size: 0.85rem;
+  }
+
+  .choice h3 {
+    font-size: 1rem;
+  }
+
+  .usecases h2 {
+    font-size: 1.8rem;
+  }
+
+  .usecase h4 {
+    font-size: 0.9rem;
+  }
+
+  .usecase p {
+    font-size: 0.8rem;
   }
 }
 
