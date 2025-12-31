@@ -1409,20 +1409,20 @@ onMounted(() => {
 .claude-cta > .btn:nth-child(2),
 .hero-actions > button:nth-child(2),
 .claude-cta > button:nth-child(2) {
-  background: #efece2; /* warm beige */
-  color: #0f172a; /* dark text */
-  border: 1px solid rgba(15,23,42,0.06);
+  background: #e8e5d9; /* slightly deeper warm beige for better contrast */
+  color: #0d1421; /* darker text for improved contrast */
+  border: 1px solid rgba(13,20,33,0.15); /* darker border for better visibility */
   padding: 0.9rem 1.4rem;
   border-radius: 999px;
   font-weight: 600;
-  box-shadow: 0 6px 20px rgba(15,23,42,0.04);
+  box-shadow: 0 6px 20px rgba(13,20,33,0.08); /* slightly darker shadow */
   transition: transform 0.18s ease, background 160ms ease, box-shadow 160ms ease;
 }
 .hero-actions > .btn:nth-child(2):hover,
 .claude-cta > .btn:nth-child(2):hover {
   transform: translateY(-2px);
-  background: #e7e3d8;
-  box-shadow: 0 12px 30px rgba(15,23,42,0.06);
+  background: #ddd9cd; /* deeper hover color for better contrast */
+  box-shadow: 0 12px 30px rgba(13,20,33,0.12); /* darker shadow for better contrast */
 }
 
 /* 在移动端恢复原有的垂直排列样式（覆盖上面的选择器） */
@@ -1470,14 +1470,14 @@ onMounted(() => {
 /* 按钮黑色边框样式 & 提高对比 */
 .btn-outline-dark {
   background: transparent;
-  border: 1px solid #0f172a;
-  color: #0f172a;
-  box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+  border: 1px solid #0d1421; /* darker border for better contrast */
+  color: #0d1421; /* darker text for improved contrast */
+  box-shadow: 0 8px 30px rgba(13,20,33,0.08); /* slightly darker shadow */
   padding: 0.6rem 1rem;
   border-radius: 999px;
 }
 .btn-outline-dark:hover {
-  background: #0f172a;
+  background: #0d1421; /* match the darker text color for consistency */
   color: #fff;
   transform: translateY(-2px);
 }
@@ -1498,12 +1498,12 @@ onMounted(() => {
 /* 浅色按钮（白底深字）*/
 .btn-light {
   background: #ffffff;
-  color: #0f172a;
+  color: #0d1421; /* darker text for improved contrast */
   border-radius: 999px;
   padding: 0.6rem 1rem;
   font-weight: 700;
-  border: 1px solid rgba(15,23,42,0.06);
-  box-shadow: 0 6px 24px rgba(15,23,42,0.04);
+  border: 1px solid rgba(13,20,33,0.12); /* darker border for better contrast */
+  box-shadow: 0 6px 24px rgba(13,20,33,0.06); /* slightly darker shadow */
 }
 
 /* 悬浮微交互：各卡片和按钮浮动效果 */
@@ -1578,9 +1578,9 @@ onMounted(() => {
   display:inline-block;
   margin-top:0.9rem;
   padding:0.35rem 0.6rem;
-  border:1px solid rgba(15,23,42,0.08);
+  border:1px solid rgba(13,20,33,0.12); /* darker border for better contrast */
   border-radius:8px;
-  color:#0f172a;
+  color:#0d1421; /* darker text for improved contrast */
   background:transparent;
   font-size:0.9rem;
 }

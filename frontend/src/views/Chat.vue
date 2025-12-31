@@ -130,8 +130,12 @@
             <!-- 消息输入框 -->
             <div class="message-input-container">
               <div class="message-input-wrapper">
+                <!-- 为输入框添加隐藏标签以满足表单可访问性要求 -->
+                <label class="sr-only" for="message-input">Type a message</label>
                 <input
+                  id="message-input"
                   type="text"
+                  aria-label="Type a message"
                   v-model="newMessage"
                   @keyup.enter="sendMessage"
                   placeholder="Type a message..."
@@ -140,10 +144,11 @@
                 >
                 <button
                   class="send-btn"
+                  aria-label="Send message"
                   @click="sendMessage"
                   :disabled="!newMessage.trim() || sendingMessage"
                 >
-                  <i class="fas fa-paper-plane"></i>
+                  <i class="fas fa-paper-plane" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -832,7 +837,8 @@ onUnmounted(() => {
 
 .online-status {
   font-size: 0.75rem;
-  color: #10b981;
+  /* 提高对比度：使用更深的绿色以满足 WCAG 可访问性要求 */
+  color: #065f46;
 }
 
 .chat-actions {
@@ -1086,7 +1092,8 @@ onUnmounted(() => {
 
 .friend-status {
   font-size: 0.875rem;
-  color: #10b981;
+  /* 提高对比度：使用更深的绿色 */
+  color: #065f46;
   display: flex;
   align-items: center;
   gap: 0.25rem;
