@@ -1042,7 +1042,7 @@ onMounted(() => {
 
   .hero-content {
     padding: 1rem 0;
-    padding-top: calc(var(--nav-height) + 1rem);
+    padding-top: calc(var(--nav-height) + 3rem); /* 增加更多间距确保标题不被遮挡 */
   }
 
   .hero-content h1 {
@@ -1172,6 +1172,10 @@ onMounted(() => {
     min-height: 320px;
   }
 
+  .hero-content {
+    padding-top: calc(var(--nav-height) + 2rem); /* 确保标题不被遮挡 */
+  }
+
   .hero-content h1 {
     font-size: 1.8rem;
   }
@@ -1241,7 +1245,7 @@ onMounted(() => {
 
   .hero-content {
     padding: 0.75rem 0;
-    padding-top: calc(var(--nav-height) + 0.75rem);
+    padding-top: calc(var(--nav-height) + 2.5rem); /* 增加更多间距确保标题不被遮挡 */
   }
 
   .hero-content h1 {

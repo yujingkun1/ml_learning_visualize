@@ -653,6 +653,7 @@ onBeforeUnmount(() => {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
+    margin-top: calc(var(--nav-height) + 1rem); /* 避免导航栏遮挡 */
   }
 
   .post-actions {

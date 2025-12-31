@@ -424,7 +424,8 @@ def get_recommendations(current_user_id):
                 )
 
             # 2. 基于向量相似度推荐算法
-            if user_interest_vector is not None and not np.allclose(user_interest_vector, 0):
+            if (user_interest_vector is not None and
+                    not np.allclose(user_interest_vector, 0)):
                 similar_algorithms = vector_service.find_similar_algorithms(
                     user_interest_vector,
                     limit=15,  # 多取一些用于后续过滤
@@ -615,7 +616,10 @@ def get_improved_fallback_algorithm_recommendations(
         # 如果用户没有学习任何算法，返回最热门的算法
         if not learned_algorithm_ids:
             # 按创建时间倒序，返回最新的算法
-            algorithms = Algorithm.query.order_by(Algorithm.created_at.desc()).limit(8).all()
+            algorithms = (Algorithm.query
+                          .order_by(Algorithm.created_at.desc())
+                          .limit(8)
+                          .all())
             recommendations = []
             for alg in algorithms:
                 alg_dict = alg.to_dict()
@@ -625,9 +629,10 @@ def get_improved_fallback_algorithm_recommendations(
             return recommendations
 
         # 如果用户已经学习了一些算法，推荐不同难度或类别的算法
-        learned_algorithms = Algorithm.query.filter(Algorithm.id.in_(learned_algorithm_ids)).all()
+        learned_algorithms = (Algorithm.query
+                              .filter(Algorithm.id.in_(learned_algorithm_ids))
+                              .all())
         learned_difficulties = {alg.difficulty for alg in learned_algorithms}
-        learned_categories = {alg.category_id for alg in learned_algorithms if alg.category_id}
 
         # 优先推荐用户未尝试的难度级别
         preferred_difficulties = []
@@ -650,7 +655,9 @@ def get_improved_fallback_algorithm_recommendations(
                 if alg:
                     alg_dict = alg.to_dict()
                     alg_dict["final_score"] = 70.0
-                    alg_dict["recommendation_reasons"] = [f"适合{alg_dict.get('difficulty', '新手') }学习者"]
+                    alg_dict["recommendation_reasons"] = [
+                        f"适合{alg_dict.get('difficulty', '新手')}学习者"
+                    ]
                     recommendations.append(alg_dict)
                     if len(recommendations) >= 4:
                         break

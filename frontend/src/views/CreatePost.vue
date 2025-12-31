@@ -676,6 +676,8 @@ onMounted(() => {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+    padding-top: calc(var(--nav-height) + 1rem); /* 避免导航栏遮挡 */
+    margin-bottom: 2rem;
   }
 
   .header-content h1 {

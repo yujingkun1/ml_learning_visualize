@@ -1184,6 +1184,20 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .page-header {
+    padding-top: calc(var(--nav-height) + 1rem); /* 避免导航栏遮挡 */
+    margin-bottom: 2rem;
+  }
+
+  .page-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .page-header p {
+    font-size: 1rem;
+  }
+
   .chat-container {
     flex-direction: column;
     height: auto;

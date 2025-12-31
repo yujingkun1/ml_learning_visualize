@@ -619,6 +619,19 @@ const finalInteractiveSrc = computed(() => {
   padding: 20px;
 }
 
+/* 大屏幕时增加容器宽度 */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1600px;
+  }
+}
+
 .algorithm-header {
   margin-bottom: 30px;
   text-align: center;
@@ -913,9 +926,52 @@ const finalInteractiveSrc = computed(() => {
   color: var(--text-light);
 }
 
+/* 大屏幕时增加tab-content的内边距 */
+@media (min-width: 768px) {
+  .tab-content {
+    padding: 30px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .tab-content {
+    padding: 40px;
+  }
+}
+
 .notebook-content iframe,
 .interactive-demo iframe {
   border-radius: 4px;
+}
+
+/* 响应式iframe高度 */
+.notebook-content iframe {
+  height: 600px; /* 小屏幕默认高度 */
+}
+
+.interactive-demo iframe {
+  height: 600px; /* 小屏幕默认高度 */
+}
+
+/* 大屏幕时增加更多空间 */
+@media (min-width: 768px) {
+  .notebook-content iframe {
+    height: 1000px; /* 大屏幕时增加高度 */
+  }
+
+  .interactive-demo iframe {
+    height: 1000px; /* 大屏幕时增加高度 */
+  }
+}
+
+@media (min-width: 1200px) {
+  .notebook-content iframe {
+    height: 1200px; /* 超大屏幕时进一步增加高度 */
+  }
+
+  .interactive-demo iframe {
+    height: 1200px; /* 超大屏幕时进一步增加高度 */
+  }
 }
 
 .resource-item {
@@ -943,5 +999,22 @@ const finalInteractiveSrc = computed(() => {
 .no-resources {
   color: #6b7280;
   font-style: italic;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .algorithm-header {
+    margin-bottom: 20px;
+    padding-top: calc(var(--nav-height) + 1rem); /* 避免导航栏遮挡 */
+  }
+
+  .algorithm-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .algorithm-description {
+    font-size: 0.9rem;
+  }
 }
 </style>

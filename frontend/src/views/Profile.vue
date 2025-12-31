@@ -1914,6 +1914,7 @@ onMounted(() => {
     flex-direction: column;
     text-align: center;
     gap: 1.5rem;
+    margin-top: calc(var(--nav-height) + 1rem); /* 避免导航栏遮挡 */
   }
 
   .user-stats {

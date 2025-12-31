@@ -716,6 +716,7 @@ const switchToAI = () => {
   .page-header {
     text-align: center;
     margin-bottom: 2rem;
+    padding-top: calc(var(--nav-height) + 1rem); /* 避免导航栏遮挡 */
   }
 
   .page-header h1 {

@@ -696,7 +696,7 @@ main {
 
   /* Mobile menu button */
   .mobile-menu-btn {
-    display: flex;
+    display: none; /* 默认隐藏，只在小屏幕显示 */
     align-items: center;
     justify-content: center;
     width: 44px;
@@ -708,6 +708,13 @@ main {
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.2s;
+  }
+
+  /* 在小屏幕时显示移动端菜单按钮 */
+  @media (max-width: 768px) {
+    .mobile-menu-btn {
+      display: flex;
+    }
   }
 
   .mobile-menu-btn:hover {
@@ -837,7 +844,6 @@ main {
     background: var(--border-color);
     margin: 0.5rem 1.25rem;
   }
-}
 
 /* 响应式工具类 */
 .d-none {
