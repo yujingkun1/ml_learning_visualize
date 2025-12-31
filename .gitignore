@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+env/
+venv/
+backend/venv/
+frontend/venv/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Build / Dist
+dist/
+frontend/dist/
+build/
+
+# Database / Local (Development)
+*.sqlite
+*.db
+*.log
+
+# Production sensitive files
+.env
+.env.local
+.env.production
+.env.production.local
+
+# Database backups (should be handled separately)
+*.sql
+*.dump
+database_backup_*.db
+
+# OS / Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Logs and temporary
+*.log
+tmp/
+temp/
+logs/
+
+# Packaging
+*.egg-info/
+
+# Production deployment files
+nginx.conf
+*.service
+deploy.sh
+
+

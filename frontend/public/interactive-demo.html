@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Interactive Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .control-group {
+            margin: 10px 0;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .visualization {
+            text-align: center;
+            margin: 20px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .code-example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+        }
+        .note {
+            background: #e3f2fd;
+            padding: 10px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Neural Network Interactive Demo</h1>
+
+    <div class="demo-container">
+        <h2>Network Architecture Visualization</h2>
+        <div class="visualization">
+            <img src="/ml_images/neural-network/plot/nn.svg" alt="Neural Network Architecture" style="max-width: 600px;">
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Interactive Controls</h2>
+        <div class="controls">
+            <div class="control-group">
+                <label for="learningRate">Learning Rate:</label>
+                <input type="range" id="learningRate" min="0.01" max="1" step="0.01" value="0.1">
+                <span id="learningRateValue">0.1</span>
+            </div>
+
+            <div class="control-group">
+                <label for="epochs">Training Epochs:</label>
+                <input type="range" id="epochs" min="10" max="1000" step="10" value="100">
+                <span id="epochsValue">100</span>
+            </div>
+
+            <div class="control-group">
+                <label for="hiddenLayers">Hidden Layers:</label>
+                <input type="range" id="hiddenLayers" min="1" max="5" step="1" value="2">
+                <span id="hiddenLayersValue">2</span>
+            </div>
+
+            <div class="control-group">
+                <label for="neurons">Neurons per Layer:</label>
+                <input type="range" id="neurons" min="2" max="64" step="2" value="12">
+                <span id="neuronsValue">12</span>
+            </div>
+        </div>
+
+        <button id="trainBtn" style="padding: 10px 20px; background: #2196f3; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Start Training
+        </button>
+
+        <div id="trainingStatus" style="margin: 20px 0; padding: 10px; background: #fff3cd; display: none;">
+            Training in progress... Please wait.
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Training Visualization</h2>
+        <div class="visualization">
+            <img id="trainingGif" src="/ml_images/neural-network/neural_network.gif" alt="Training Animation" style="max-width: 600px; display: none;">
+            <p id="gifPlaceholder">Click "Start Training" to see the neural network learn!</p>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Loss Landscape</h2>
+        <div class="visualization">
+            <img src="/ml_images/neural-network/neural_network_loss_landscape.gif" alt="Loss Landscape" style="max-width: 600px;">
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Sample Code</h2>
+        <div class="code-example">
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Neural Network parameters
+learning_rate = 0.1
+epochs = 100
+hidden_layers = 2
+neurons_per_layer = 12
+
+# Training data
+X = np.random.randn(100, 2)
+y = (X[:, 0]**2 + X[:, 1]**2 < 1).astype(int)
+
+# Simple neural network implementation
+class NeuralNetwork:
+    def __init__(self, input_size, hidden_size, output_size):
+        self.weights = [np.random.randn(input_size, hidden_size)]
+        for _ in range(hidden_layers - 1):
+            self.weights.append(np.random.randn(hidden_size, hidden_size))
+        self.weights.append(np.random.randn(hidden_size, output_size))
+
+    def forward(self, X):
+        self.layers = [X]
+        for w in self.weights[:-1]:
+            X = np.tanh(X @ w)
+            self.layers.append(X)
+        X = X @ self.weights[-1]
+        self.layers.append(X)
+        return X
+
+    def train(self, X, y, epochs, lr):
+        for epoch in range(epochs):
+            # Forward pass
+            output = self.forward(X)
+
+            # Backward pass (simplified)
+            error = output - y.reshape(-1, 1)
+            for i in reversed(range(len(self.weights))):
+                if i == len(self.weights) - 1:
+                    delta = error
+                else:
+                    delta = (delta @ self.weights[i+1].T) * (1 - self.layers[i+1]**2)
+
+                self.weights[i] -= lr * (self.layers[i].T @ delta)
+
+# Initialize and train
+nn = NeuralNetwork(2, neurons_per_layer, 1)
+nn.train(X, y, epochs, learning_rate)
+        </div>
+    </div>
+
+    <div class="note">
+        <strong>Note:</strong> This is a simplified interactive demo. For full Jupyter notebook interactivity with Voila,
+        you would need to run: <code>voila neural_network.ipynb</code> and embed it via iframe.
+        The controls above simulate parameter adjustment that would be available in the real notebook.
+    </div>
+
+    <script>
+        // Interactive controls
+        const learningRate = document.getElementById('learningRate');
+        const epochs = document.getElementById('epochs');
+        const hiddenLayers = document.getElementById('hiddenLayers');
+        const neurons = document.getElementById('neurons');
+        const trainBtn = document.getElementById('trainBtn');
+        const trainingStatus = document.getElementById('trainingStatus');
+        const trainingGif = document.getElementById('trainingGif');
+        const gifPlaceholder = document.getElementById('gifPlaceholder');
+
+        // Update value displays
+        learningRate.addEventListener('input', () => {
+            document.getElementById('learningRateValue').textContent = learningRate.value;
+        });
+
+        epochs.addEventListener('input', () => {
+            document.getElementById('epochsValue').textContent = epochs.value;
+        });
+
+        hiddenLayers.addEventListener('input', () => {
+            document.getElementById('hiddenLayersValue').textContent = hiddenLayers.value;
+        });
+
+        neurons.addEventListener('input', () => {
+            document.getElementById('neuronsValue').textContent = neurons.value;
+        });
+
+        // Training simulation
+        trainBtn.addEventListener('click', () => {
+            trainingStatus.style.display = 'block';
+            trainBtn.disabled = true;
+            trainBtn.textContent = 'Training...';
+
+            // Simulate training delay
+            setTimeout(() => {
+                trainingStatus.style.display = 'none';
+                trainBtn.disabled = false;
+                trainBtn.textContent = 'Start Training';
+                trainingGif.style.display = 'block';
+                gifPlaceholder.style.display = 'none';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

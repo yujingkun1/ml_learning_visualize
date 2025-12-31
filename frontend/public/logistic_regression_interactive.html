@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression Interactive Demo</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .control-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 200px;
+            margin-right: 10px;
+        }
+        .value-display {
+            min-width: 50px;
+            text-align: right;
+        }
+        .visualization {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .note {
+            background: #e3f2fd;
+            padding: 10px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        .probability-display {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Logistic Regression Interactive Demo</h1>
+
+    <div class="demo-container">
+        <h2>Logistic Regression Algorithm</h2>
+        <p>Logistic regression predicts probabilities using the sigmoid function. Adjust the parameters below to see how the decision boundary changes.</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="w1">Weight W1:</label>
+                <input type="range" id="w1" min="-3" max="3" step="0.1" value="1">
+                <span class="value-display" id="w1Value">1.0</span>
+            </div>
+
+            <div class="control-group">
+                <label for="w2">Weight W2:</label>
+                <input type="range" id="w2" min="-3" max="3" step="0.1" value="1">
+                <span class="value-display" id="w2Value">1.0</span>
+            </div>
+
+            <div class="control-group">
+                <label for="b">Bias b:</label>
+                <input type="range" id="b" min="-3" max="3" step="0.1" value="0">
+                <span class="value-display" id="bValue">0.0</span>
+            </div>
+        </div>
+
+        <button id="resetBtn">Reset to Default</button>
+    </div>
+
+    <div class="demo-container">
+        <h2>Decision Boundary & Probabilities</h2>
+        <div class="visualization">
+            <svg id="plot" width="600" height="400"></svg>
+        </div>
+        <div class="probability-display">
+            <p>Click on any point to see the predicted probability!</p>
+            <div id="probabilityInfo" style="margin-top: 10px; padding: 10px; background: #f0f0f0; border-radius: 5px; display: none;">
+                Point: (<span id="pointX">0</span>, <span id="pointY">0</span>)<br>
+                Probability: <span id="probability">0.5</span><br>
+                Prediction: <span id="prediction">Class 1</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Mathematical Foundation</h2>
+        <p>Logistic regression uses the sigmoid function to map linear predictions to probabilities:</p>
+        <div style="text-align: center; font-family: 'Courier New', monospace; background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+            P(y=1|x) = σ(w₁x₁ + w₂x₂ + b) = 1 / (1 + e^(-(w₁x₁ + w₂x₂ + b)))
+        </div>
+        <p>Where:</p>
+        <ul>
+            <li><strong>w₁, w₂</strong>: Weights for the features</li>
+            <li><strong>b</strong>: Bias term</li>
+            <li><strong>σ</strong>: Sigmoid function</li>
+            <li><strong>P(y=1|x)</strong>: Probability of positive class</li>
+        </ul>
+        <p>The decision boundary occurs where P(y=1|x) = 0.5, which is when w₁x₁ + w₂x₂ + b = 0.</p>
+    </div>
+
+    <div class="note">
+        <strong>Interactive Demo:</strong> Adjust the weights and bias using the sliders above. Watch how the logistic regression decision boundary changes. The background color shows the probability gradient (darker blue = higher probability of positive class). Click anywhere on the plot to see the exact probability for that point.
+    </div>
+
+    <script>
+        // Generate sample data
+        const data = [];
+        for (let i = 0; i < 50; i++) {
+            const x1 = Math.random() * 4 - 2;
+            const x2 = Math.random() * 4 - 2;
+            // Decision boundary: x2 > x1
+            const trueProb = 1 / (1 + Math.exp(-(x1 + x2))); // sigmoid(x1 + x2)
+            const label = Math.random() < trueProb ? 1 : 0;
+            data.push({ x1, x2, label });
+        }
+
+        const svg = d3.select("#plot");
+        const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+        const width = +svg.attr("width") - margin.left - margin.right;
+        const height = +svg.attr("height") - margin.top - margin.bottom;
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Background probability gradient
+        const gridSize = 20;
+        const probs = [];
+        for (let i = 0; i <= gridSize; i++) {
+            for (let j = 0; j <= gridSize; j++) {
+                const x1 = -2 + (i / gridSize) * 4;
+                const x2 = -2 + (j / gridSize) * 4;
+                const prob = 1 / (1 + Math.exp(-(x1 + x2))); // Using default weights
+                probs.push({ x1, x2, prob });
+            }
+        }
+
+        // Background rectangles for probability visualization
+        g.selectAll("rect")
+            .data(probs)
+            .enter()
+            .append("rect")
+            .attr("x", d => (-2 + (d.x1 + 2) / 4 * width) - width/gridSize/2)
+            .attr("y", d => (-2 + (d.x2 + 2) / 4 * height) - height/gridSize/2)
+            .attr("width", width/gridSize)
+            .attr("height", height/gridSize)
+            .attr("fill", d => `rgba(100, 149, 237, ${d.prob * 0.3})`)
+            .attr("stroke", "none");
+
+        // Scales
+        const xScale = d3.scaleLinear().domain([-2.5, 2.5]).range([0, width]);
+        const yScale = d3.scaleLinear().domain([-2.5, 2.5]).range([height, 0]);
+
+        // Axes
+        g.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(xScale));
+
+        g.append("g")
+            .call(d3.axisLeft(yScale));
+
+        // Data points
+        g.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", d => xScale(d.x1))
+            .attr("cy", d => yScale(d.x2))
+            .attr("r", 6)
+            .attr("fill", d => d.label === 1 ? "steelblue" : "tomato")
+            .attr("stroke", "white")
+            .attr("stroke-width", 2);
+
+        // Decision boundary line (where probability = 0.5)
+        let line = g.append("line")
+            .attr("stroke", "black")
+            .attr("stroke-width", 2);
+
+        // Click area for probability display
+        g.append("rect")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("fill", "transparent")
+            .on("click", function(event) {
+                const [mouseX, mouseY] = d3.pointer(event);
+                const x1 = xScale.invert(mouseX);
+                const x2 = yScale.invert(mouseY);
+
+                const w1 = +document.getElementById('w1').value;
+                const w2 = +document.getElementById('w2').value;
+                const b = +document.getElementById('b').value;
+
+                const linear = w1 * x1 + w2 * x2 + b;
+                const prob = 1 / (1 + Math.exp(-linear));
+                const prediction = prob >= 0.5 ? "Positive Class" : "Negative Class";
+
+                document.getElementById('pointX').textContent = x1.toFixed(2);
+                document.getElementById('pointY').textContent = x2.toFixed(2);
+                document.getElementById('probability').textContent = prob.toFixed(3);
+                document.getElementById('prediction').textContent = prediction;
+                document.getElementById('probabilityInfo').style.display = 'block';
+            });
+
+        // Update plot function
+        function updatePlot() {
+            const w1 = +document.getElementById('w1').value;
+            const w2 = +document.getElementById('w2').value;
+            const b = +document.getElementById('b').value;
+
+            // Update background gradient
+            g.selectAll("rect")
+                .attr("fill", d => {
+                    const linear = w1 * d.x1 + w2 * d.x2 + b;
+                    const prob = 1 / (1 + Math.exp(-linear));
+                    return `rgba(100, 149, 237, ${prob * 0.3})`;
+                });
+
+            // Decision boundary: w1*x1 + w2*x2 + b = 0
+            // Solve for x2: x2 = (-w1*x1 - b) / w2
+            if (w2 !== 0) {
+                const x1_start = -2.5;
+                const x1_end = 2.5;
+                const x2_start = (-w1 * x1_start - b) / w2;
+                const x2_end = (-w1 * x1_end - b) / w2;
+
+                line
+                    .attr("x1", xScale(x1_start))
+                    .attr("y1", yScale(x2_start))
+                    .attr("x2", xScale(x1_end))
+                    .attr("y2", yScale(x2_end))
+                    .style("display", "block");
+            } else {
+                line.style("display", "none");
+            }
+        }
+
+        // Event listeners
+        document.getElementById('w1').addEventListener('input', function() {
+            document.getElementById('w1Value').textContent = this.value;
+            updatePlot();
+        });
+
+        document.getElementById('w2').addEventListener('input', function() {
+            document.getElementById('w2Value').textContent = this.value;
+            updatePlot();
+        });
+
+        document.getElementById('b').addEventListener('input', function() {
+            document.getElementById('bValue').textContent = this.value;
+            updatePlot();
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            document.getElementById('w1').value = 1;
+            document.getElementById('w1Value').textContent = '1.0';
+            document.getElementById('w2').value = 1;
+            document.getElementById('w2Value').textContent = '1.0';
+            document.getElementById('b').value = 0;
+            document.getElementById('bValue').textContent = '0.0';
+            updatePlot();
+        });
+
+        // Initial plot
+        updatePlot();
+    </script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neural Network Weights Visualization (Local)</title>
+  <script src="https://cdn.plot.ly/plotly-2.28.0.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f6f7fb; color: #222; }
+    .container { max-width: 1100px; margin: 0 auto; background: #fff; padding: 18px; border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); }
+    h1 { margin: 0 0 8px; font-size: 28px; text-align: left; }
+    p.lead { color: #555; margin-top: 6px; margin-bottom: 14px; }
+    .controls { display:flex; gap:18px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
+    .slider { display:flex; flex-direction:column; align-items:flex-start; }
+    label { font-weight:600; margin-bottom:6px; }
+    input[type=range] { width:220px; }
+    #plot { width:100%; height:560px; }
+    .note { margin-top:12px; color:#666; font-size:13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Neural Network Weights Visualization</h1>
+    <p class="lead">This interactive shows a toy loss surface over two weight dimensions and how backpropagation (gradient descent) moves weights toward a minimum. Use sliders to change the current weight values — the red marker shows the current point on the loss surface.</p>
+
+    <div class="controls">
+      <div class="slider">
+        <label for="w1">Weight w1: <span id="w1-val">0.5</span></label>
+        <input id="w1" type="range" min="-3" max="3" step="0.01" value="0.5" />
+      </div>
+      <div class="slider">
+        <label for="w2">Weight w2: <span id="w2-val">0.5</span></label>
+        <input id="w2" type="range" min="-3" max="3" step="0.01" value="0.5" />
+      </div>
+      <div class="slider">
+        <label for="b">Bias b: <span id="b-val">0.0</span></label>
+        <input id="b" type="range" min="-2" max="2" step="0.01" value="0.0" />
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button id="run-gd">Run few GD steps</button>
+        <button id="reset">Reset</button>
+      </div>
+    </div>
+
+    <div id="plot" role="img" aria-label="3D loss surface"></div>
+    <div class="note">Implementation: local Plotly surface + marker. This is a simplified toy demo (loss is a function of w1,w2,b) used for visualization only.</div>
+  </div>
+
+  <script>
+    // Toy loss function: creates a surface with a nice minimum near (1,0.5)
+    function lossSurface(w1, w2, b) {
+      // base quadratic bowl with a small sinusoidal ripple to make landscape interesting
+      const w1c = w1 - 1.0;
+      const w2c = w2 - 0.5;
+      const bsc = b - 0.2;
+      const base = w1c*w1c + 1.2*w2c*w2c + 0.8*bsc*bsc;
+      const ripple = 0.2 * Math.sin(3*w1) * Math.cos(2*w2);
+      return base + ripple;
+    }
+
+    // build grid
+    const gridN = 60;
+    const w1Range = numericRange(-3, 3, gridN);
+    const w2Range = numericRange(-3, 3, gridN);
+    function numericRange(a,b,n){ const out=[]; for(let i=0;i<n;i++){ out.push(a + (b-a)*i/(n-1)); } return out; }
+
+    function computeSurface(bias) {
+      const z = [];
+      for(let i=0;i<w2Range.length;i++){
+        const row=[];
+        for(let j=0;j<w1Range.length;j++){
+          row.push(lossSurface(w1Range[j], w2Range[i], bias));
+        }
+        z.push(row);
+      }
+      return z;
+    }
+
+    // initial params
+    let curW1 = parseFloat(document.getElementById('w1').value);
+    let curW2 = parseFloat(document.getElementById('w2').value);
+    let curB  = parseFloat(document.getElementById('b').value);
+
+    // initial surface
+    const z0 = computeSurface(curB);
+
+    const surfaceTrace = {
+      z: z0,
+      x: w1Range,
+      y: w2Range,
+      type: 'surface',
+      colorscale: 'Viridis',
+      opacity: 0.9,
+      showscale: false
+    };
+
+    const markerTrace = {
+      x: [curW1],
+      y: [curW2],
+      z: [lossSurface(curW1, curW2, curB)],
+      mode: 'markers',
+      marker: { color: 'red', size: 6 },
+      type: 'scatter3d',
+      name: 'current'
+    };
+
+    const layout = {
+      title: '',
+      autosize: true,
+      margin: {l:0,r:0,b:0,t:30},
+      scene: {
+        xaxis: {title: 'w1'},
+        yaxis: {title: 'w2'},
+        zaxis: {title: 'Loss'}
+      }
+    };
+
+    Plotly.newPlot('plot', [surfaceTrace, markerTrace], layout, {responsive: true});
+
+    // update functions
+    function updateMarker() {
+      const z = lossSurface(curW1, curW2, curB);
+      Plotly.restyle('plot', {'x': [[curW1]], 'y': [[curW2]], 'z': [[z]]}, [1]);
+    }
+
+    function updateSurface() {
+      const znew = computeSurface(curB);
+      Plotly.restyle('plot', {'z': [znew]}, [0]);
+      updateMarker();
+    }
+
+    // attach events
+    document.getElementById('w1').addEventListener('input', (e)=>{
+      curW1 = parseFloat(e.target.value);
+      document.getElementById('w1-val').textContent = curW1.toFixed(2);
+      updateMarker();
+    });
+    document.getElementById('w2').addEventListener('input', (e)=>{
+      curW2 = parseFloat(e.target.value);
+      document.getElementById('w2-val').textContent = curW2.toFixed(2);
+      updateMarker();
+    });
+    document.getElementById('b').addEventListener('input', (e)=>{
+      curB = parseFloat(e.target.value);
+      document.getElementById('b-val').textContent = curB.toFixed(2);
+      updateSurface();
+    });
+
+    // run simple gradient descent steps (toy)
+    document.getElementById('run-gd').addEventListener('click', ()=>{
+      // perform few iterative steps toward minimum using analytical gradient of quadratic part
+      for(let k=0;k<8;k++){
+        // gradients of base quadratic only (ignore ripple)
+        const gradW1 = 2*(curW1 - 1.0);
+        const gradW2 = 2*1.2*(curW2 - 0.5);
+        const gradB  = 2*0.8*(curB - 0.2);
+        const lr = 0.1;
+        curW1 -= lr * gradW1;
+        curW2 -= lr * gradW2;
+        curB  -= lr * gradB;
+      }
+      document.getElementById('w1').value = curW1.toFixed(3);
+      document.getElementById('w2').value = curW2.toFixed(3);
+      document.getElementById('b').value  = curB.toFixed(3);
+      document.getElementById('w1-val').textContent = curW1.toFixed(2);
+      document.getElementById('w2-val').textContent = curW2.toFixed(2);
+      document.getElementById('b-val').textContent  = curB.toFixed(2);
+      updateSurface();
+    });
+
+    document.getElementById('reset').addEventListener('click', ()=>{
+      curW1 = 0.5; curW2 = 0.5; curB = 0.0;
+      document.getElementById('w1').value = curW1;
+      document.getElementById('w2').value = curW2;
+      document.getElementById('b').value = curB;
+      document.getElementById('w1-val').textContent = curW1.toFixed(2);
+      document.getElementById('w2-val').textContent = curW2.toFixed(2);
+      document.getElementById('b-val').textContent  = curB.toFixed(2);
+      updateSurface();
+    });
+  </script>
+</body>
+</html>
+

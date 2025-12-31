@@ -1,0 +1,480 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
+
+:root {
+  /* New light/beige theme inspired by reference */
+  --brand-bg: #efefe9;        /* page background */
+  --brand-panel: #ffffff;     /* card/panel background */
+  --light-panel: #f6f4ee;     /* subtle off-white panels */
+  --muted-beige: #d7cbb8;     /* soft accent */
+  --muted-beige-2: #c1b39f;
+  --accent-color: #274060;    /* deep slate blue for CTAs */
+  --accent-2: #8a5f34;        /* warm secondary accent */
+  --text-dark: #0f172a;       /* primary readable text */
+  --text-color: var(--text-dark);
+  --text-secondary: #4b5563;
+  --primary-color: #ffffff;   /* text color used on primary buttons */
+  --secondary-color: #e6eef6; /* accessible soft secondary button background */
+  --success-color: #0b6b3a;   /* green for success buttons with enough contrast */
+  --background-secondary: #f3f6f9;
+  --text-muted: #4b5563;      /* muted copy (darkened to improve contrast) */
+  --text-light: #ffffff;
+  --border-color: rgba(15,23,42,0.06);
+  --shadow: 0 10px 30px rgba(15,23,42,0.06);
+  --shadow-soft: 0 6px 18px rgba(15,23,42,0.04);
+  --heading-font: 'Merriweather', serif;
+  --heading-color: #0b0b0b;
+  --body-font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --glass: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.6));
+  --nav-height: 72px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--body-font);
+  background-color: var(--brand-bg);
+  color: var(--text-dark);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Improve text contrast inside cards and resource areas */
+.card,
+.algorithm-card,
+.post-card,
+.resource-item,
+.recommended-card {
+  color: var(--text-muted);
+}
+
+.algorithm-card p,
+.post-card p,
+.resource-description,
+.resource-authors,
+.post-excerpt,
+.meta-item,
+.post-meta,
+.resource-meta,
+.algorithm-meta,
+.algorithm-content p {
+  color: var(--text-muted);
+}
+
+/* Alternate light panels to avoid excessive darkness across the site */
+.algorithms-container,
+.posts-container,
+.learning-records,
+.recommendations,
+.auth-card,
+.post-card,
+.algorithm-card,
+.card {
+  background: var(--light-panel);
+  color: var(--text-dark);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(2,6,23,0.06);
+}
+
+/* Ensure headings are not hidden behind fixed nav when navigated/anchored */
+h1, h2, h3, h4, h5 {
+  scroll-margin-top: calc(var(--nav-height) + 16px);
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+}
+
+/* Navigation brand title color based on nav background */
+.nav .brand-title {
+  color: #000000 !important; /* Black text on light nav */
+}
+.nav.nav-dark .brand-title {
+  color: #ffffff !important; /* White text on dark nav */
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+  /* Default button text should be dark to ensure contrast on light buttons */
+  color: var(--text-dark);
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: var(--primary-color);
+  /* Ensure high contrast on primary buttons */
+  box-shadow: 0 2px 8px rgba(39,64,96,0.12);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: var(--text-dark);
+  border: 1px solid rgba(15,23,42,0.06);
+}
+
+.btn-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: var(--primary-color);
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+}
+
+.btn-outline:hover {
+  background: var(--accent-color);
+  color: var(--primary-color);
+}
+
+.btn-sm {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.875rem;
+  border-radius: 0.45rem;
+}
+
+/* Make button text inside the Resources area deep blue for better contrast */
+.resources-content .btn {
+  color: #0b3d91 !important;
+}
+
+.btn-dark {
+  background-color: #000000;
+  color: white;
+}
+
+.btn-dark:hover {
+  background-color: #333333;
+  color: white;
+}
+
+.btn-white {
+  background-color: white;
+  color: #000000;
+}
+
+.btn-white:hover {
+  background-color: #f5f5f5;
+  color: #000000;
+}
+
+.card {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.nav {
+  background: var(--light-panel);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 60;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.nav.nav-dark {
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.nav-brand img.logo-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: block;
+}
+/* nav-brand container */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+.nav-spacer {
+  height: var(--nav-height);
+  width: 100%;
+}
+main {
+  /* We use .nav-spacer to reserve space for the fixed nav to avoid double-spacing */
+  padding-top: 0;
+}
+
+/* Brand title and nav link colors */
+.brand-title {
+  font-family: var(--heading-font);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0;
+}
+.nav.nav-dark .nav-link {
+  color: var(--text-muted);
+}
+.nav.nav-dark.scrolled .nav-link {
+  color: var(--text-light);
+}
+
+/* Make sign-in/sign-out high contrast in nav */
+.nav .btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.06);
+  color: var(--text-dark);
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+}
+.nav.nav-dark .btn-ghost {
+  border-color: rgba(255,255,255,0.12);
+  color: var(--text-light);
+}
+.nav .btn-outline {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.06);
+  color: var(--text-dark);
+}
+.nav.nav-dark .btn-outline {
+  color: var(--text-light);
+  border-color: rgba(255,255,255,0.08);
+}
+
+/* Light nav variant (for when footer or light section is visible) */
+.nav.nav-light {
+  background: var(--light-panel);
+  backdrop-filter: none;
+  box-shadow: 0 4px 12px rgba(2,6,23,0.06);
+}
+.nav.nav-light .nav-link {
+  color: var(--text-dark);
+}
+.nav.nav-light .btn-ghost,
+.nav.nav-light .btn-outline {
+  color: var(--text-dark);
+  border-color: rgba(0,0,0,0.08);
+}
+
+/* Ensure only the brand title switches color with nav theme and other controls keep expected colors */
+.nav.nav-light .brand-title {
+  color: var(--text-dark) !important;
+}
+.nav.nav-dark .brand-title {
+  color: var(--text-light) !important;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--accent-color);
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, var(--primary-color), #8b5cf6);
+  color: white;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.knowledge-graph {
+  height: 600px;
+  background: var(--background-secondary);
+  border-radius: 0.75rem;
+  margin: 2rem 0;
+}
+
+.algorithm-visualization {
+  margin: 2rem 0;
+  padding: 2rem;
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  border-bottom-color: var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab-content {
+  padding: 1rem 0;
+}
+
+.radar-chart {
+  width: 100%;
+  height: 400px;
+}
+
+.posts-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.post-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s;
+}
+
+.post-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.post-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Footer styles */
+.site-footer {
+  background: var(--brand-panel);
+  color: var(--text-dark);
+  padding: 1.5rem 0;
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+.site-footer .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+.footer-brand {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.footer-links a {
+  color: var(--text-dark);
+  text-decoration: none;
+}
+.footer-links a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+.footer-bottom {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(15,23,42,0.04);
+  text-align: center;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+}
+
+.post-action {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.post-action:hover {
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .container {
+    padding: 0 0.5rem;
+  }
+}

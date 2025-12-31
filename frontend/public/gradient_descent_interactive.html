@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Descent Interactive Demo</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .demo-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .control-group {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 200px;
+            margin-right: 10px;
+        }
+        .value-display {
+            min-width: 50px;
+            text-align: right;
+        }
+        .visualization {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .note {
+            background: #e3f2fd;
+            padding: 10px;
+            border-left: 4px solid #2196f3;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #2196f3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1976d2;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2196f3;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gradient Descent Interactive Demo</h1>
+
+    <div class="demo-container">
+        <h2>Gradient Descent Algorithm</h2>
+        <p>Gradient descent finds the minimum of a function by iteratively moving in the direction of the negative gradient. Watch how the algorithm converges to the optimal parameters.</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="learningRate">Learning Rate (α):</label>
+                <input type="range" id="learningRate" min="0.01" max="1" step="0.01" value="0.1">
+                <span class="value-display" id="learningRateValue">0.10</span>
+            </div>
+
+            <div class="control-group">
+                <label for="initialW">Initial Weight (w₀):</label>
+                <input type="range" id="initialW" min="-5" max="5" step="0.1" value="4">
+                <span class="value-display" id="initialWValue">4.0</span>
+            </div>
+
+            <div class="control-group">
+                <label for="initialB">Initial Bias (b₀):</label>
+                <input type="range" id="initialB" min="-5" max="5" step="0.1" value="3">
+                <span class="value-display" id="initialBValue">3.0</span>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <button id="startBtn">Start Gradient Descent</button>
+            <button id="stepBtn">Step by Step</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Optimization Process</h2>
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="currentStep">0</div>
+                <div class="stat-label">Step</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="currentW">4.00</div>
+                <div class="stat-label">Weight (w)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="currentB">3.00</div>
+                <div class="stat-label">Bias (b)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="currentLoss">0.00</div>
+                <div class="stat-label">Loss (MSE)</div>
+            </div>
+        </div>
+
+        <div class="visualization">
+            <svg id="contourPlot" width="600" height="500"></svg>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <h2>Mathematical Foundation</h2>
+        <p>Gradient descent updates parameters iteratively:</p>
+        <div style="text-align: center; font-family: 'Courier New', monospace; background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+            θ₊₁ = θ₊ - α × ∇J(θ₊)
+        </div>
+        <p>Where:</p>
+        <ul>
+            <li><strong>θ</strong>: Parameters (weights and biases)</li>
+            <li><strong>α</strong>: Learning rate</li>
+            <li><strong>∇J(θ)</strong>: Gradient of the loss function</li>
+            <li><strong>MSE</strong>: Mean Squared Error loss function</li>
+        </ul>
+        <p>The algorithm stops when the gradient becomes very small or a maximum number of iterations is reached.</p>
+    </div>
+
+    <div class="note">
+        <strong>Interactive Demo:</strong> Adjust the learning rate and initial parameters, then click "Start Gradient Descent" to watch the algorithm converge. Use "Step by Step" to see each iteration individually. The contour plot shows the loss landscape, and the red dot represents the current parameter position.
+    </div>
+
+    <script>
+        // Loss function: MSE for simple linear regression
+        // True parameters: w=2, b=1
+        // Data: y = 2*x + 1 + noise
+        const TRUE_W = 2;
+        const TRUE_B = 1;
+
+        // Generate sample data
+        const data = [];
+        for (let i = 0; i < 20; i++) {
+            const x = Math.random() * 4 - 2;
+            const noise = (Math.random() - 0.5) * 0.5;
+            const y = TRUE_W * x + TRUE_B + noise;
+            data.push({ x, y });
+        }
+
+        let currentW, currentB, learningRate;
+        let isRunning = false;
+        let stepCount = 0;
+        let animationId;
+
+        // SVG setup
+        const svg = d3.select("#contourPlot");
+        const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+        const width = +svg.attr("width") - margin.left - margin.right;
+        const height = +svg.attr("height") - margin.top - margin.bottom;
+
+        const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+
+        // Scales for parameter space
+        const wScale = d3.scaleLinear().domain([-1, 5]).range([0, width]);
+        const bScale = d3.scaleLinear().domain([-1, 4]).range([height, 0]);
+
+        // Create contour data
+        const contourData = [];
+        for (let w = -1; w <= 5; w += 0.1) {
+            for (let b = -1; b <= 4; b += 0.1) {
+                const loss = calculateLoss(w, b);
+                contourData.push({ w, b, loss });
+            }
+        }
+
+        // Color scale for loss
+        const colorScale = d3.scaleSequential(d3.interpolateBlues)
+            .domain(d3.extent(contourData, d => d.loss));
+
+        // Create contour plot
+        const contours = d3.contours()
+            .size([51, 51])
+            .thresholds(d3.range(0, d3.max(contourData, d => d.loss), 0.1))
+            .smooth(true);
+
+        const lossGrid = [];
+        for (let i = 0; i <= 50; i++) {
+            lossGrid[i] = [];
+            for (let j = 0; j <= 50; j++) {
+                const w = -1 + (i / 50) * 6;
+                const b = -1 + (j / 50) * 5;
+                lossGrid[i][j] = calculateLoss(w, b);
+            }
+        }
+
+        g.selectAll("path")
+            .data(contours(lossGrid))
+            .enter()
+            .append("path")
+            .attr("d", d3.geoPath(d3.geoIdentity().scale(width / 50).translate([0, 0])))
+            .attr("fill", d => colorScale(d.value))
+            .attr("stroke", "white")
+            .attr("stroke-width", 0.5);
+
+        // Axes
+        g.append("g")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(wScale).ticks(6))
+            .append("text")
+            .attr("x", width / 2)
+            .attr("y", 40)
+            .attr("fill", "black")
+            .attr("text-anchor", "middle")
+            .text("Weight (w)");
+
+        g.append("g")
+            .call(d3.axisLeft(bScale).ticks(5))
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -40)
+            .attr("fill", "black")
+            .attr("text-anchor", "middle")
+            .text("Bias (b)");
+
+        // Current position marker
+        const positionMarker = g.append("circle")
+            .attr("r", 8)
+            .attr("fill", "red")
+            .attr("stroke", "white")
+            .attr("stroke-width", 2);
+
+        // Path showing gradient descent trajectory
+        let trajectory = g.append("path")
+            .attr("stroke", "red")
+            .attr("stroke-width", 2)
+            .attr("fill", "none");
+
+        let trajectoryPoints = [];
+
+        function calculateLoss(w, b) {
+            let totalLoss = 0;
+            for (const point of data) {
+                const prediction = w * point.x + b;
+                const error = prediction - point.y;
+                totalLoss += error * error;
+            }
+            return totalLoss / data.length;
+        }
+
+        function calculateGradient(w, b) {
+            let gradW = 0, gradB = 0;
+            for (const point of data) {
+                const prediction = w * point.x + b;
+                const error = prediction - point.y;
+                gradW += error * point.x;
+                gradB += error;
+            }
+            gradW *= 2 / data.length;
+            gradB *= 2 / data.length;
+            return { gradW, gradB };
+        }
+
+        function updateDisplay() {
+            document.getElementById('currentStep').textContent = stepCount;
+            document.getElementById('currentW').textContent = currentW.toFixed(2);
+            document.getElementById('currentB').textContent = currentB.toFixed(2);
+            document.getElementById('currentLoss').textContent = calculateLoss(currentW, currentB).toFixed(4);
+
+            // Update marker position
+            positionMarker
+                .attr("cx", wScale(currentW))
+                .attr("cy", bScale(currentB));
+
+            // Update trajectory
+            trajectoryPoints.push({ w: currentW, b: currentB });
+            trajectory
+                .datum(trajectoryPoints)
+                .attr("d", d3.line()
+                    .x(d => wScale(d.w))
+                    .y(d => bScale(d.b))
+                    .curve(d3.curveCardinal));
+        }
+
+        function gradientDescentStep() {
+            const { gradW, gradB } = calculateGradient(currentW, currentB);
+            currentW -= learningRate * gradW;
+            currentB -= learningRate * gradB;
+            stepCount++;
+            updateDisplay();
+
+            // Check convergence
+            const loss = calculateLoss(currentW, currentB);
+            if (loss < 0.01 || stepCount > 200) {
+                stopAnimation();
+            }
+        }
+
+        function startAnimation() {
+            if (isRunning) return;
+            isRunning = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('stepBtn').disabled = true;
+
+            function animate() {
+                gradientDescentStep();
+                if (isRunning && calculateLoss(currentW, currentB) >= 0.01 && stepCount <= 200) {
+                    animationId = setTimeout(animate, 100);
+                } else {
+                    stopAnimation();
+                }
+            }
+            animate();
+        }
+
+        function stopAnimation() {
+            isRunning = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('stepBtn').disabled = false;
+            if (animationId) {
+                clearTimeout(animationId);
+            }
+        }
+
+        function reset() {
+            stopAnimation();
+            currentW = +document.getElementById('initialW').value;
+            currentB = +document.getElementById('initialB').value;
+            learningRate = +document.getElementById('learningRate').value;
+            stepCount = 0;
+            trajectoryPoints = [];
+            trajectory.attr("d", "");
+            updateDisplay();
+        }
+
+        // Event listeners
+        document.getElementById('learningRate').addEventListener('input', function() {
+            document.getElementById('learningRateValue').textContent = this.value;
+            learningRate = +this.value;
+        });
+
+        document.getElementById('initialW').addEventListener('input', function() {
+            document.getElementById('initialWValue').textContent = this.value;
+            if (!isRunning) {
+                currentW = +this.value;
+                updateDisplay();
+            }
+        });
+
+        document.getElementById('initialB').addEventListener('input', function() {
+            document.getElementById('initialBValue').textContent = this.value;
+            if (!isRunning) {
+                currentB = +this.value;
+                updateDisplay();
+            }
+        });
+
+        document.getElementById('startBtn').addEventListener('click', startAnimation);
+        document.getElementById('stepBtn').addEventListener('click', gradientDescentStep);
+        document.getElementById('resetBtn').addEventListener('click', reset);
+
+        // Initialize
+        reset();
+    </script>
+</body>
+</html>
