@@ -170,7 +170,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
@@ -240,11 +240,25 @@ onBeforeUnmount(() => {
 
 // 模式切换相关
 const activeMode = ref('traditional') // 'traditional' | 'ai'
-const aiAnalysisRef = ref()
-const aiRecommendationsRef = ref()
+const aiAnalysisRef = ref<InstanceType<typeof AILearningAnalysis> | null>(null)
+const aiRecommendationsRef = ref<InstanceType<typeof AIRecommendations> | null>(null)
 
 // 传统浏览模式相关
-const posts = ref([])
+interface Post {
+  id: number
+  title: string
+  content?: string
+  author?: {
+    username: string
+    avatar?: string
+  }
+  created_at: string
+  like_count?: number
+  comment_count?: number
+  is_featured?: boolean
+}
+
+const posts = ref<Post[]>([])
 const loading = ref(false)
 const searchQuery = ref('')
 const currentPage = ref(1)
@@ -295,7 +309,7 @@ const fetchPosts = async () => {
 }
 
 // 防抖搜索
-let searchTimeout = null
+let searchTimeout: NodeJS.Timeout | null = null
 const debouncedSearch = () => {
   if (searchTimeout) clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
@@ -305,7 +319,7 @@ const debouncedSearch = () => {
 }
 
 // 格式化日期
-const formatDate = (dateString) => {
+const formatDate = (dateString: string) => {
   const date = new Date(dateString)
   const now = new Date()
   const diff = now.getTime() - date.getTime()
